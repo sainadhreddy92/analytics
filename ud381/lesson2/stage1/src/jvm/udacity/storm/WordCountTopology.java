@@ -131,13 +131,19 @@ public class WordCountTopology {
       //increment count.
 
       //Syntax to get the word from the 1st column of incoming tuple
-      //String word = tuple.getString(0);
+      String word = tuple.getString(0);
+
+      if (! countMap.containsKey(word)){
+        countMap.put(word,1);
+      }else{
+        countMap.put(word,countMap.get(word)+1);
+      }
 
 
 
       //After countMap is updated, emit word and count to output collector
       // Syntax to emit the word and count (uncomment to emit)
-      //collector.emit(new Values(word, countMap.get(word)));
+      collector.emit(new Values(word, countMap.get(word)));
 
       //END YOUR CODE Part 1-of-3
       //***************************************************
@@ -155,7 +161,7 @@ public class WordCountTopology {
       //BEGIN YOUR CODE - Part 2-of-3
       //uncomment line below to declare output
 
-      //outputFieldsDeclarer.declare(new Fields("word","count"));
+      outputFieldsDeclarer.declare(new Fields("word","count"));
 
       //END YOUR CODE - Part 2-of-3
       //****************************************************
@@ -212,6 +218,8 @@ public class WordCountTopology {
 
     // attach the count bolt using fields grouping - parallelism of 15
     builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("word-spout", new Fields("word"));
+
+    builder.setBolt("report-bolt",new ReportBolt(),15).globalGrouping("count-bolt");
 
     // attach the report bolt using global grouping - parallelism of 1
     //***************************************************
