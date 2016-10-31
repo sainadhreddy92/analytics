@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * A bolt that parses the tweet into words
  */
-public class ParseTweetBolt extends BaseRichBolt 
+public class ParseTweetBolt extends BaseRichBolt
 {
   // To output tuples from this bolt to the count bolt
   OutputCollector collector;
@@ -30,14 +30,14 @@ public class ParseTweetBolt extends BaseRichBolt
   public void prepare(
       Map                     map,
       TopologyContext         topologyContext,
-      OutputCollector         outputCollector) 
+      OutputCollector         outputCollector)
   {
     // save the output collector for emitting tuples
     collector = outputCollector;
   }
 
   @Override
-  public void execute(Tuple tuple) 
+  public void execute(Tuple tuple)
   {
     // get the 1st column 'tweet' from tuple
     String tweet = tuple.getString(0);
@@ -55,7 +55,7 @@ public class ParseTweetBolt extends BaseRichBolt
   }
 
   @Override
-  public void declareOutputFields(OutputFieldsDeclarer declarer) 
+  public void declareOutputFields(OutputFieldsDeclarer declarer)
   {
     // tell storm the schema of the output tuple for this spout
     // tuple consists of a single column called 'tweet-word'

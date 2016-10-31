@@ -354,6 +354,11 @@ public class TweetTopology {
     // now create the tweet spout with the credentials
     TweetSpout tweetSpout = new TweetSpout(
 
+       "oCSy09KkEjxSUM9Mamfjev42m",
+       "ccAYz3oH2QI9tY3kexVdKzwSIE4CQgiB1qmrnwItg9kfm4tf6t",
+       "2788384473-glPaShX857y8eiLE4i9o5lY4WIkuEVEY2VFascd",
+       "rP6UMgUyxPT7QBm8wT7mlJwoAo49NMZ9xc7hSv4K1ZyA8"
+
         //"[Your customer key]",
         //"[Your secret key]",
         //"[Your access token]",
