@@ -15,14 +15,24 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
+import udacity.storm.tools.TotalRankingsBolt;
+import udacity.storm.tools.IntermediateRankingsBolt;
+import udacity.storm.tools.Rankings;
+import udacity.storm.tools.Rankable;
+import udacity.storm.tools.RankableObjectWithFields;
 
-class TweetTopology
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+
+class TopNTweetTopology
 {
   public static void main(String[] args) throws Exception
   {
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
 
+    int TOP_N=10;
     /*
      * In order to create the spout, you need to get twitter credentials
      * If you need to use Twitter firehose/Tweet stream for your idea,
@@ -34,10 +44,10 @@ class TweetTopology
 
     // now create the tweet spout with the credentials
     TweetSpout tweetSpout = new TweetSpout(
-        "[Your customer key]",
-        "[Your secret key]",
-        "[Your access token]",
-        "[Your access secret]"
+    "oCSy09KkEjxSUM9Mamfjev42m",
+    "ccAYz3oH2QI9tY3kexVdKzwSIE4CQgiB1qmrnwItg9kfm4tf6t",
+    "2788384473-glPaShX857y8eiLE4i9o5lY4WIkuEVEY2VFascd",
+    "rP6UMgUyxPT7QBm8wT7mlJwoAo49NMZ9xc7hSv4K1ZyA8"
     );
 
     // attach the tweet spout to the topology - parallelism of 1
@@ -50,10 +60,14 @@ class TweetTopology
     //builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
 
     // attach rolling count bolt using fields grouping - parallelism of 5
-    builder.setBolt("rolling-count-bolt", new RollingCountBolt(30, 10), 1).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
+    builder.setBolt("count-bolt", new CountBolt(),15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
+
+    builder.setBolt("intermediate-rankings",new IntermediateRankingsBolt(TOP_N)).shuffleGrouping("count-bolt");
+
+    builder.setBolt("rankings", new TotalRankingsBolt(TOP_N)).globalGrouping("intermediate-rankings");
 
     // attach the report bolt using global grouping - parallelism of 1
-    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("rolling-count-bolt");
+    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("rankings");
 
     // create the default config object
     Config conf = new Config();

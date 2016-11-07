@@ -15,6 +15,12 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
+import udacity.storm.tools.Rankings;
+import udacity.storm.tools.RankableObjectWithFields;
+import udacity.storm.tools.Rankable;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import java.util.Map;
 
@@ -46,13 +52,13 @@ public class ReportBolt extends BaseRichBolt
   public void execute(Tuple tuple)
   {
     // access the first column 'word'
-    String word = tuple.getStringByField("word");
+    Rankings rankableList = (Rankings) tuple.getValue(0);
 
-    // access the second column 'count'
-    Integer count = tuple.getIntegerByField("count");
-
-    // publish the word count to redis using word as the key
-    redis.publish("WordCountTopology", word + "|" + Long.toString(count));
+    for (Rankable r: rankableList.getRankings()){
+        String word = r.getObject().toString();
+        Long count = r.getCount();
+        redis.publish("WordCountTopology", word + "|" + Long.toString(count));
+        }
   }
 
   public void declareOutputFields(OutputFieldsDeclarer declarer)
