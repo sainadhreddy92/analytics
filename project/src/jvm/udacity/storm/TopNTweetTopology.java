@@ -66,8 +66,10 @@ class TopNTweetTopology
 
     builder.setBolt("rankings", new TotalRankingsBolt(TOP_N)).globalGrouping("intermediate-rankings");
 
+    builder.setBolt("new-bolt", new NewBolt(), 10).globalGrouping("rankings").shuffleGrouping("tweet-spout");
+
     // attach the report bolt using global grouping - parallelism of 1
-    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("rankings");
+    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("new-bolt");
 
     // create the default config object
     Config conf = new Config();
@@ -99,13 +101,13 @@ class TopNTweetTopology
       cluster.submitTopology("tweet-word-count", conf, builder.createTopology());
 
       // let the topology run for 300 seconds. note topologies never terminate!
-      Utils.sleep(300000);
+      //Utils.sleep(300000);
 
       // now kill the topology
-      cluster.killTopology("tweet-word-count");
+      //cluster.killTopology("tweet-word-count");
 
       // we are done, so shutdown the local cluster
-      cluster.shutdown();
+      //cluster.shutdown();
     }
   }
 }
