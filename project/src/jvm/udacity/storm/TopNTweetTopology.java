@@ -68,8 +68,10 @@ class TopNTweetTopology
 
     builder.setBolt("new-bolt", new NewBolt(), 10).globalGrouping("rankings").shuffleGrouping("tweet-spout");
 
+    builder.setBolt("senti-bolt", new SentimentAnalysis(),10).globalGrouping("new-bolt");
+
     // attach the report bolt using global grouping - parallelism of 1
-    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("new-bolt");
+    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("senti-bolt");
 
     // create the default config object
     Config conf = new Config();

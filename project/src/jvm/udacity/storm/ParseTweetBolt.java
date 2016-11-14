@@ -35,7 +35,7 @@ public class ParseTweetBolt extends BaseRichBolt
     "para","want","your","you're","really","video","it's","when","they","their","much",
     "would","what","them","todo","FOLLOW","retweet","RETWEET","even","right","like",
     "bien","Like","will","Will","pero","Pero","can't","were","Can't","Were","TWITTER",
-    "make","take","This","from","about","como","esta","follows","followed"};
+    "make","take","This","from","about","como","esta","follows","followed","RT"};
 
   @Override
   public void prepare(
